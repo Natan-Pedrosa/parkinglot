@@ -1,52 +1,100 @@
+
+const val NO_CAR = "No_CAR"
+const val NO_HASH_CODE = "NO_HASH_CODE"
 const val PARK_FREE = false
 const val PARK_NOT_FREE = true
 
+class Parking {
+    val parkHashCode = mutableListOf<String>()
+    val parkColorCar = mutableListOf<String>()
+    val parkLot = mutableListOf<Boolean>()
+    val parkCarFree = mutableListOf<Int>()
+    var created = false
+}
 fun main() {
 
     start()
 }
 
 fun start() {
-    val parkLot = MutableList(20){false}
-    val parkinFree = MutableList(20){it}
+    var parkLot = Parking()
 
     while (true) {
-        val lineDigited = readln().split(" ")
-        val command = lineDigited[0]
-        val isExit = menu(command, parkLot,parkinFree, lineDigited)
+        val input = readln().split(" ")
+        val command = input[0]
+        val isExit = showMenu(command, input, parkLot)
         if (isExit) return
     }
 }
 
-fun menu(command: String, parkLot: MutableList<Boolean>, parkCarLeaved: MutableList<Int>, lineDigited: List<String>):Boolean {
+fun showMenu(command: String, input: List<String>, parking: Parking):Boolean {
+
     var isExit = false
     when(command){
-        "park" ->  addPark(parkLot, parkCarLeaved, lineDigited)
-        "leave" -> leavePark(parkLot, parkCarLeaved, lineDigited)
+        "create" -> {
+                val size = input[1].toInt()
+                createParking(size, parking)
+        }
+        "park" ->  if(parking.created) addPark(parking, input) else println("Sorry, a parking lot has not been created.")
+        "leave" -> if(parking.created) leavePark(parking, input) else println("Sorry, a parking lot has not been created.")
+        "status" -> if(parking.created) showStatus(parking) else println("Sorry, a parking lot has not been created.")
         "exit" -> isExit = true
     }
     return isExit
 }
 
-fun addPark(parkLot: MutableList<Boolean>, parkingFree: MutableList<Int>, lineDigited: List<String>){
-    if(parkingFree.isNotEmpty()){
-        val index = parkingFree[0]
-        parkLot[index] = true
-        parkingFree.removeAt(0)
-        println("${lineDigited[2]} car parked in spot ${index + 1}.")
+fun createParking(sizeParking: Int, parking: Parking) {
+    if(parking.created){
+        parking.parkLot.clear()
+        parking.parkColorCar.clear()
+        parking.parkHashCode.clear()
+        parking.parkCarFree.clear()
+    }
+
+    for(index in 0 until sizeParking) {
+        parking.parkLot.add(false)
+        parking.parkCarFree.add(index)
+        parking.parkColorCar.add(NO_CAR)
+        parking.parkHashCode.add(NO_HASH_CODE)
+    }
+    println("Created a parking lot with $sizeParking spots.")
+    parking.created = true
+}
+fun addPark(parking: Parking, input: List<String>){
+    if(parking.parkCarFree.isNotEmpty()){
+        val index = parking.parkCarFree[0]
+        parking.parkLot[index] = true
+        parking.parkHashCode[index] = input[1]
+        parking.parkColorCar[index] = input[2]
+        parking.parkCarFree.removeAt(0)
+
+        println("${parking.parkColorCar[index]} car parked in spot ${index + 1}.")
     }else{
         println("Sorry, the parking lot is full.")
     }
 }
 
-fun leavePark(parkLot: MutableList<Boolean>, parkingFree: MutableList<Int>, lineDigited: List<String>){
-    val index = lineDigited[1].toInt() - 1
-    if(parkLot[index] == PARK_NOT_FREE){
-        parkLot[index] = PARK_FREE
-        parkingFree.add(index)
-        parkingFree.sort()
+fun leavePark(parking: Parking, input: List<String>){
+    val index = input[1].toInt() - 1
+    if(parking.parkLot[index] == PARK_NOT_FREE){
+        parking.parkLot[index] = PARK_FREE
+        parking.parkHashCode[index] = NO_HASH_CODE
+        parking.parkColorCar[index] = NO_CAR
+        parking.parkCarFree.add(index)
+        parking.parkCarFree.sort()
+
         println("Spot ${index + 1} is free.")
     }else {
         println("There is no car in spot ${index + 1}")
     }
+}
+fun showStatus(parking: Parking) {
+    var isEmpity = true
+    for(index in parking.parkLot.indices) {
+       if(parking.parkLot[index] == true) {
+           println("${index + 1} ${parking.parkHashCode[index]} ${parking.parkColorCar[index]}")
+           isEmpity = false
+       }
+    }
+    if(isEmpity) println("Parking lot is empty.")
 }
