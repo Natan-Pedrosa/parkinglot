@@ -17,7 +17,7 @@ fun main() {
 }
 
 fun start() {
-    var parkLot = Parking()
+    val parkLot = Parking()
 
     while (true) {
         val input = readln().split(" ")
@@ -38,6 +38,9 @@ fun showMenu(command: String, input: List<String>, parking: Parking):Boolean {
         "park" ->  if(parking.created) addPark(parking, input) else println("Sorry, a parking lot has not been created.")
         "leave" -> if(parking.created) leavePark(parking, input) else println("Sorry, a parking lot has not been created.")
         "status" -> if(parking.created) showStatus(parking) else println("Sorry, a parking lot has not been created.")
+        "reg_by_color" -> if(parking.created) printRegisterCarByColor(parking, input[1]) else println("Sorry, a parking lot has not been created.")
+        "spot_by_color" -> if(parking.created) printSpotParkingByColor(parking, input[1]) else println("Sorry, a parking lot has not been created.")
+        "spot_by_reg" -> if(parking.created) printSpotParkingByReg(parking, input[1]) else println("Sorry, a parking lot has not been created.")
         "exit" -> isExit = true
     }
     return isExit
@@ -97,4 +100,59 @@ fun showStatus(parking: Parking) {
        }
     }
     if(isEmpity) println("Parking lot is empty.")
+}
+
+fun printRegisterCarByColor(parking: Parking, color: String) {
+    val register = mutableListOf<String>()
+
+    for(index in parking.parkColorCar.indices) {
+        val parkingColor = parking.parkColorCar[index].lowercase()
+        if(color.lowercase() == parkingColor) register.add(parking.parkHashCode[index])
+    }
+    if (register.isNotEmpty()) {
+        for(index in register.indices) {
+            when(index){
+                0 -> print(register[index])
+                else -> print(", ${register[index]}")
+            }
+        }
+        println()
+    }else println("No cars with color $color were found.")
+}
+
+
+fun printSpotParkingByReg(parking: Parking, reg: String) {
+    val spot = mutableListOf<Int>()
+
+    for (index in parking.parkHashCode.indices) {
+
+        if (reg == parking.parkHashCode[index]) spot.add(index + 1)
+    }
+    if (spot.isNotEmpty()) {
+        for(index in spot.indices) {
+            when(index){
+                0 -> print(spot[index])
+                else -> print(", ${spot[index]}")
+            }
+        }
+        println()
+    }else println("No cars with registration number $reg were found.")
+}
+
+fun printSpotParkingByColor(parking: Parking, color: String) {
+    val spot = mutableListOf<Int>()
+
+    for(index in parking.parkColorCar.indices) {
+        val parkingColor = parking.parkColorCar[index].lowercase()
+        if(color.lowercase() == parkingColor) spot.add(index + 1)
+    }
+    if (spot.isNotEmpty()) {
+        for(index in spot.indices) {
+            when(index){
+                0 -> print(spot[index])
+                else -> print(", ${spot[index]}")
+            }
+        }
+        println()
+    }else println("No cars with color $color were found.")
 }
