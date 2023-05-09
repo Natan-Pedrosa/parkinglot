@@ -110,13 +110,8 @@ fun printRegisterCarByColor(parking: Parking, color: String) {
         if(color.lowercase() == parkingColor) register.add(parking.parkHashCode[index])
     }
     if (register.isNotEmpty()) {
-        for(index in register.indices) {
-            when(index){
-                0 -> print(register[index])
-                else -> print(", ${register[index]}")
-            }
-        }
-        println()
+
+        println(register.joinToString())
     }else println("No cars with color $color were found.")
 }
 
@@ -129,13 +124,8 @@ fun printSpotParkingByReg(parking: Parking, reg: String) {
         if (reg == parking.parkHashCode[index]) spot.add(index + 1)
     }
     if (spot.isNotEmpty()) {
-        for(index in spot.indices) {
-            when(index){
-                0 -> print(spot[index])
-                else -> print(", ${spot[index]}")
-            }
-        }
-        println()
+
+        println(spot.joinToString())
     }else println("No cars with registration number $reg were found.")
 }
 
@@ -147,12 +137,7 @@ fun printSpotParkingByColor(parking: Parking, color: String) {
         if(color.lowercase() == parkingColor) spot.add(index + 1)
     }
     if (spot.isNotEmpty()) {
-        for(index in spot.indices) {
-            when(index){
-                0 -> print(spot[index])
-                else -> print(", ${spot[index]}")
-            }
-        }
-        println()
+
+        println(spot.joinToString())
     }else println("No cars with color $color were found.")
 }
